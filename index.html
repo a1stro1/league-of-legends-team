@@ -837,6 +837,7 @@
 <button id="pressButton" onclick="pressButton()">Press to Confirm</button>
 <p id="pressCount">Players Pressed: 0/5</p>
 <p id="timer"></p>
+<p id="votedStatus"></p> <!-- This will show the vote status of each player -->
 
 <script>
     let playersPressed = 0;
@@ -846,33 +847,10 @@
     let button = document.getElementById('pressButton');
     let pressCountText = document.getElementById('pressCount');
     let timerText = document.getElementById('timer');
-    
-    // Check if player has already voted
-    const playerHasVoted = localStorage.getItem('playerHasVoted') === 'true';
+    let votedStatusText = document.getElementById('votedStatus');
 
-    // Retrieve saved state from localStorage on page load
-    window.onload = function() {
-        if (localStorage.getItem('playersPressed')) {
-            playersPressed = parseInt(localStorage.getItem('playersPressed'));
-            pressCountText.innerText = `Players Pressed: ${playersPressed}/${playersLimit}`;
-        }
-
-        if (localStorage.getItem('timer')) {
-            timerText.innerText = localStorage.getItem('timer');
-        }
-
-        if (playersPressed === playersLimit) {
-            // If all players have pressed, start the reset countdown
-            startResetTimer();
-        } else {
-            // Enable button if not all players pressed yet
-            if (playerHasVoted) {
-                button.disabled = true; // Disable button if player already voted
-            } else {
-                button.disabled = false;
-            }
-        }
-    };
+    // Array to track which players have voted
+    let playersVoted = [];
 
     // Update champion selection dynamically
     function updateChampion(role) {
@@ -882,12 +860,6 @@
 
     // Function to handle button press
     function pressButton() {
-        // Check if player has already voted
-        if (playerHasVoted) {
-            alert("You have already voted!");
-            return; // Prevent voting again
-        }
-
         // Disable button after press
         button.disabled = true;
 
@@ -895,17 +867,21 @@
         playersPressed++;
         pressCountText.innerText = `Players Pressed: ${playersPressed}/${playersLimit}`;
 
-        // Save the updated state to localStorage
-        localStorage.setItem('playersPressed', playersPressed);
-        localStorage.setItem('playerHasVoted', 'true'); // Mark that the player has voted
+        // Track player who voted (use the player count as identifier)
+        playersVoted.push(`Player ${playersPressed}`);
+        displayVotedStatus();  // Update the voted status
 
         // Check if all players have pressed the button
         if (playersPressed === playersLimit) {
             clearInterval(resetTimer); // Stop the reset timer
             timerText.innerText = "All players confirmed! Button will reset in 10 minutes.";
-            localStorage.setItem('timer', "All players confirmed! Button will reset in 10 minutes.");
             startResetTimer();
         }
+    }
+
+    // Function to display vote status of all players
+    function displayVotedStatus() {
+        votedStatusText.innerHTML = `Voted Players: ${playersVoted.join(", ")}`;
     }
 
     // Function to start a countdown to reset the button
@@ -927,21 +903,18 @@
                 seconds--;
             }
 
-            let timeString = `Time until reset: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-            timerText.innerText = timeString;
-            localStorage.setItem('timer', timeString); // Store the timer state
+            timerText.innerText = `Time until reset: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
         }, 1000);
     }
 
     // Function to reset the button and counter after 10 minutes or when all players press
     function resetButton() {
         playersPressed = 0;
+        playersVoted = [];  // Reset the players who voted
         pressCountText.innerText = `Players Pressed: 0/${playersLimit}`;
         button.disabled = false;
         timerText.innerText = "Button has been reset. Please press again!";
-        localStorage.removeItem('playersPressed'); // Remove the players pressed state
-        localStorage.removeItem('timer'); // Remove the timer state
-        localStorage.removeItem('playerHasVoted'); // Reset player vote state
+        votedStatusText.innerHTML = "Voted Players: None";
     }
 
     // Timer reset after 10 minutes if players haven't all pressed
