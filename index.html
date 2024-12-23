@@ -53,35 +53,70 @@
             color: #ff6347;
             margin-top: 10px;
         }
+        select {
+            padding: 10px;
+            font-size: 1em;
+            background-color: #252540;
+            color: #00bcd4;
+            border: 1px solid #00bcd4;
+            border-radius: 8px;
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>We've Got This!</h1>
     <p>Our team composition is unbeatable. Here's why:</p>
 
+    <!-- Role Dropdowns for Champion Selection -->
     <div class="champion">
-        <h2>Top Lane: Malphite</h2>
-        <p>Malphite's unstoppable engage and tankiness make him the ultimate teamfight initiator.</p>
+        <h2>Top Lane: <span id="topChamp">Malphite</span></h2>
+        <select id="topChampion" onchange="updateChampion('top')">
+            <option value="Malphite">Malphite</option>
+            <option value="Garen">Garen</option>
+            <option value="Shen">Shen</option>
+            <!-- Add more champions as needed -->
+        </select>
     </div>
 
     <div class="champion">
-        <h2>Jungle: Nocturne</h2>
-        <p>Nocturne's map control and fear-inducing ultimate will dominate the game.</p>
+        <h2>Jungle: <span id="jungleChamp">Nocturne</span></h2>
+        <select id="jungleChampion" onchange="updateChampion('jungle')">
+            <option value="Nocturne">Nocturne</option>
+            <option value="Lee Sin">Lee Sin</option>
+            <option value="Warwick">Warwick</option>
+            <!-- Add more champions as needed -->
+        </select>
     </div>
 
     <div class="champion">
-        <h2>Mid Lane: Ahri</h2>
-        <p>Ahri's mobility and charm will dismantle their carries effortlessly.</p>
+        <h2>Mid Lane: <span id="midChamp">Ahri</span></h2>
+        <select id="midChampion" onchange="updateChampion('mid')">
+            <option value="Ahri">Ahri</option>
+            <option value="Zed">Zed</option>
+            <option value="Lux">Lux</option>
+            <!-- Add more champions as needed -->
+        </select>
     </div>
 
     <div class="champion">
-        <h2>ADC: Jinx</h2>
-        <p>Jinx's late-game power and AoE damage will carry teamfights.</p>
+        <h2>ADC: <span id="adcChamp">Jinx</span></h2>
+        <select id="adcChampion" onchange="updateChampion('adc')">
+            <option value="Jinx">Jinx</option>
+            <option value="Kai'Sa">Kai'Sa</option>
+            <option value="Miss Fortune">Miss Fortune</option>
+            <!-- Add more champions as needed -->
+        </select>
     </div>
 
     <div class="champion">
-        <h2>Support: Leona</h2>
-        <p>Leona's crowd control will lock down their entire team.</p>
+        <h2>Support: <span id="supportChamp">Leona</span></h2>
+        <select id="supportChampion" onchange="updateChampion('support')">
+            <option value="Leona">Leona</option>
+            <option value="Thresh">Thresh</option>
+            <option value="Lulu">Lulu</option>
+            <!-- Add more champions as needed -->
+        </select>
     </div>
 
     <div class="motivation">
@@ -101,16 +136,22 @@
         let button = document.getElementById('pressButton');
         let pressCountText = document.getElementById('pressCount');
         let timerText = document.getElementById('timer');
-        
+
+        // Update champion selection dynamically
+        function updateChampion(role) {
+            let championName = document.getElementById(role + 'Champion').value;
+            document.getElementById(role + 'Champ').innerText = championName;
+        }
+
         // Function to handle button press
         function pressButton() {
             // Disable button after press
             button.disabled = true;
-            
+
             // Increase player press count
             playersPressed++;
             pressCountText.innerText = `Players Pressed: ${playersPressed}/${playersLimit}`;
-            
+
             // Check if all players have pressed the button
             if (playersPressed === playersLimit) {
                 clearInterval(resetTimer); // Stop the reset timer
