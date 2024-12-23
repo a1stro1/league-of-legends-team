@@ -883,6 +883,9 @@
         // Mark player as voted in localStorage
         localStorage.setItem('playerVoted', 'true');
 
+        // Trigger the page refresh for all users
+        window.localStorage.setItem('voteUpdated', Date.now());  // Use timestamp to trigger refresh
+
         // Check if all players have pressed the button
         if (playersPressed === playersLimit) {
             clearInterval(resetTimer); // Stop the reset timer
@@ -938,7 +941,15 @@
             resetButton();
         }
     }, 10 * 60 * 1000); // 10 minutes in milliseconds
+
+    // Listen for changes in localStorage to trigger refresh
+    window.addEventListener('storage', function(event) {
+        if (event.key === 'voteUpdated') {
+            location.reload();  // Refresh the page if a new vote is detected
+        }
+    });
 </script>
+
 
 
 </body>
