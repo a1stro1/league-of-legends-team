@@ -852,6 +852,15 @@
     // Array to track which players have voted
     let playersVoted = [];
 
+    // Check localStorage to see if player has already voted
+    let playerHasVoted = localStorage.getItem('playerVoted');
+
+    if (playerHasVoted) {
+        // If the player has already voted, disable the button
+        button.disabled = true;
+        votedStatusText.innerText = "You have already voted!";
+    }
+
     // Update champion selection dynamically
     function updateChampion(role) {
         let championName = document.getElementById(role + 'Champion').value;
@@ -870,6 +879,9 @@
         // Track player who voted (use the player count as identifier)
         playersVoted.push(`Player ${playersPressed}`);
         displayVotedStatus();  // Update the voted status
+
+        // Mark player as voted in localStorage
+        localStorage.setItem('playerVoted', 'true');
 
         // Check if all players have pressed the button
         if (playersPressed === playersLimit) {
@@ -915,6 +927,9 @@
         button.disabled = false;
         timerText.innerText = "Button has been reset. Please press again!";
         votedStatusText.innerHTML = "Voted Players: None";
+
+        // Remove the player's vote status from localStorage when the button resets
+        localStorage.removeItem('playerVoted');
     }
 
     // Timer reset after 10 minutes if players haven't all pressed
@@ -924,6 +939,7 @@
         }
     }, 10 * 60 * 1000); // 10 minutes in milliseconds
 </script>
+
 
 </body>
 </html>
